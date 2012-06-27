@@ -64,7 +64,9 @@ public class Clock extends TextView {
     private static int AM_PM_STYLE = AM_PM_STYLE_GONE;
 
     private int mAmPmStyle;
-    private boolean mShowClock;
+    protected boolean mShowClock;
+    protected boolean mCenterClock;
+    protected ContentResolver resolver;
 
     Handler mHandler;
 
@@ -74,11 +76,13 @@ public class Clock extends TextView {
         }
 
         void observe() {
-            ContentResolver resolver = mContext.getContentResolver();
+            resolver = mContext.getContentResolver();
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_AM_PM), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_CLOCK), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.CFX_CENTER_CLOCK), false, this);
         }
 
         @Override public void onChange(boolean selfChange) {
@@ -238,6 +242,11 @@ public class Clock extends TextView {
 
     }
 
+     public void updateVisibilityFromStatusBar(boolean show) {
+        if (mShowClock && !mCenterClock)
+             setVisibility(show ? View.VISIBLE : View.GONE);
+     }
+
     private void updateSettings(){
         ContentResolver resolver = mContext.getContentResolver();
 
@@ -256,10 +265,17 @@ public class Clock extends TextView {
         mShowClock = (Settings.System.getInt(resolver,
                 Settings.System.STATUS_BAR_CLOCK, 1) == 1);
 
-        if(mShowClock)
+        mCenterClock = (Settings.System.getInt(resolver,
+                Settings.System.CFX_CENTER_CLOCK, 1) == 1);
+
+        updateClockVisibility();
+
+    }
+
+    protected void updateClockVisibility() {
+        if(mShowClock && !mCenterClock)
             setVisibility(View.VISIBLE);
         else
             setVisibility(View.GONE);
     }
 }
-

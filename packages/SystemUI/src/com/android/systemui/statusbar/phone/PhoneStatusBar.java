@@ -83,6 +83,9 @@ import com.android.internal.statusbar.StatusBarNotification;
 
 import com.android.systemui.statusbar.powerwidget.PowerWidget;
 
+import com.android.systemui.statusbar.policy.Clock;
+import com.android.systemui.statusbar.policy.CenterClock;
+
 import com.android.systemui.R;
 import com.android.systemui.recent.RecentTasksLoader;
 import com.android.systemui.recent.RecentsPanelView;
@@ -150,6 +153,8 @@ public class PhoneStatusBar extends StatusBar {
     private int mMinBrightness;
 
     PhoneStatusBarPolicy mIconPolicy;
+
+    LinearLayout mCenterClockLayout;
 
     // These are no longer handled by the policy, because we need custom strategies for them
     BatteryController mBatteryController;
@@ -398,6 +403,7 @@ public class PhoneStatusBar extends StatusBar {
         mMoreIcon = sb.findViewById(R.id.moreIcon);
         mNotificationIcons.setOverflowIndicator(mMoreIcon);
         mIcons = (LinearLayout)sb.findViewById(R.id.icons);
+        mCenterClockLayout = (LinearLayout) sb.findViewById(R.id.center_clock_layout);
         mTickerView = sb.findViewById(R.id.ticker);
 
         /* Destroy the old widget before recreating the expanded dialog
@@ -1175,11 +1181,19 @@ public class PhoneStatusBar extends StatusBar {
     public void showClock(boolean show) {
         ContentResolver resolver = mContext.getContentResolver();
 
-        View clock = mStatusBarView.findViewById(R.id.clock);
+        Clock clock = (Clock) mStatusBarView.findViewById(R.id.clock);
         mShowClock = (Settings.System.getInt(resolver,
                 Settings.System.STATUS_BAR_CLOCK, 1) == 1);
-        if (clock != null) {
-            clock.setVisibility(show ? (mShowClock ? View.VISIBLE : View.GONE) : View.GONE);
+        boolean mCenterClock = (Settings.System.getInt(resolver,
+                Settings.System.CFX_CENTER_CLOCK, 1) == 1);
+        if (clock != null && !mCenterClock) {
+            clock.updateVisibilityFromStatusBar(show);
+            //clock.setVisibility(show ? (mShowClock ? View.VISIBLE : View.GONE) : View.GONE);
+        }
+        CenterClock cclock = (CenterClock) mStatusBarView.findViewById(R.id.center_clock);
+        if (cclock != null && mCenterClock) {
+            cclock.updateVisibilityFromStatusBar(show);
+            //cclock.setVisibility(show ? (mShowClock ? View.VISIBLE : View.GONE) : View.GONE);
         }
     }
 
@@ -1921,24 +1935,30 @@ public class PhoneStatusBar extends StatusBar {
         public void tickerStarting() {
             mTicking = true;
             mIcons.setVisibility(View.GONE);
+            mCenterClockLayout.setVisibility(View.GONE);
             mTickerView.setVisibility(View.VISIBLE);
             mTickerView.startAnimation(loadAnim(com.android.internal.R.anim.push_up_in, null));
             mIcons.startAnimation(loadAnim(com.android.internal.R.anim.push_up_out, null));
+            mCenterClockLayout.startAnimation(loadAnim(com.android.internal.R.anim.push_up_out, null));
         }
 
         @Override
         public void tickerDone() {
             mIcons.setVisibility(View.VISIBLE);
             mTickerView.setVisibility(View.GONE);
+            mCenterClockLayout.setVisibility(View.VISIBLE);
             mIcons.startAnimation(loadAnim(com.android.internal.R.anim.push_down_in, null));
+            mCenterClockLayout.startAnimation(loadAnim(com.android.internal.R.anim.push_down_in, null));
             mTickerView.startAnimation(loadAnim(com.android.internal.R.anim.push_down_out,
                         mTickingDoneListener));
         }
 
         public void tickerHalting() {
             mIcons.setVisibility(View.VISIBLE);
+            mCenterClockLayout.setVisibility(View.VISIBLE);
             mTickerView.setVisibility(View.GONE);
             mIcons.startAnimation(loadAnim(com.android.internal.R.anim.fade_in, null));
+            mCenterClockLayout.startAnimation(loadAnim(com.android.internal.R.anim.fade_in, null));
             mTickerView.startAnimation(loadAnim(com.android.internal.R.anim.fade_out,
                         mTickingDoneListener));
         }

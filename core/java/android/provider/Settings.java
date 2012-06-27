@@ -2574,6 +2574,11 @@ public final class Settings {
          */
         public static final String CFX_NAVBAR_HEIGHT = "cfx_navbar_height";
 
+        /**
+         * @hide
+         */
+        public static final String CFX_CENTER_CLOCK = "cfx_center_clock";
+
         /** Control the display of the action overflow button within app UI.
          * 0 = use system default
          * 1 = force on
