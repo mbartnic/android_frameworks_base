@@ -839,12 +839,14 @@ public class NetworkManagementService extends INetworkManagementService.Stub
         }
     }
 
-    private void modifyNat(String action, String internalInterface, String externalInterface)
-            throws SocketException {
+    private void modifyNat(String action, String internalInterface, String externalInterface) {
         final Command cmd = new Command("nat", action, internalInterface, externalInterface);
-
-        final NetworkInterface internalNetworkInterface = NetworkInterface.getByName(
-                internalInterface);
+        final NetowrkInterface internalNetworkInterface = null;
+        try {
+            internalNetworkInterface = NetworkInterface.getByName(internalInterface);
+        } catch (SocketException e) {
+            Log.e(TAG, "failed to get ifindex. continuing.");
+        }
         if (internalNetworkInterface == null) {
             cmd.appendArg("0");
         } else {
