@@ -841,7 +841,7 @@ public class NetworkManagementService extends INetworkManagementService.Stub
 
     private void modifyNat(String action, String internalInterface, String externalInterface) {
         final Command cmd = new Command("nat", action, internalInterface, externalInterface);
-        final NetowrkInterface internalNetworkInterface = null;
+        NetworkInterface internalNetworkInterface = null;
         try {
             internalNetworkInterface = NetworkInterface.getByName(internalInterface);
         } catch (SocketException e) {
@@ -872,7 +872,7 @@ public class NetworkManagementService extends INetworkManagementService.Stub
         mContext.enforceCallingOrSelfPermission(CONNECTIVITY_INTERNAL, TAG);
         try {
             modifyNat("enable", internalInterface, externalInterface);
-        } catch (SocketException e) {
+        } catch (Exception e) {
             throw new IllegalStateException(e);
         }
     }
@@ -882,7 +882,7 @@ public class NetworkManagementService extends INetworkManagementService.Stub
         mContext.enforceCallingOrSelfPermission(CONNECTIVITY_INTERNAL, TAG);
         try {
             modifyNat("disable", internalInterface, externalInterface);
-        } catch (SocketException e) {
+        } catch (Exception e) {
             throw new IllegalStateException(e);
         }
     }

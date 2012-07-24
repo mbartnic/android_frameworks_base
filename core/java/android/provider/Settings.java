@@ -2602,6 +2602,12 @@ public final class Settings {
         public static final String WEATHER_USE_METRIC = "weather_use_metric";
 
         /**
+         * Add option to display the navigation bar
+         * @hide
+         */
+        public static final String CFX_NAVBAR_ENABLE = "cfx_navbar_enable";
+
+        /**
          * Invert low/high temperature display
          * @hide
          */
