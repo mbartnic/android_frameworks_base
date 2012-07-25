@@ -3932,7 +3932,7 @@ public final class ActivityThread {
             // overhead to the process.
             Display display = WindowManagerImpl.getDefault().getDefaultDisplay();
             if (!ActivityManager.isHighEndGfx(display)) {
-                HardwareRenderer.disable(false);
+                //HardwareRenderer.disable(false);
             }
         }
         
