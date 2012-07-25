@@ -1173,7 +1173,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     mHasNavigationBar = true;
             } else {
                     mHasNavigationBar = (Settings.System.getInt(mContext.getContentResolver(),
-                        Settings.System.CFX_NAVBAR_ENABLE, 0) == 1);
+                        Settings.System.CFX_ENABLE_NAVIGATION_BAR, 0) == 1);
             }
             // Allow a system property to override this. Used by the emulator.
             // See also hasNavigationBar().

@@ -2605,7 +2605,7 @@ public final class Settings {
          * Add option to display the navigation bar
          * @hide
          */
-        public static final String CFX_NAVBAR_ENABLE = "cfx_navbar_enable";
+        public static final String CFX_ENABLE_NAVIGATION_BAR = "cfx_enable_navigation_bar";
 
         /**
          * Invert low/high temperature display
